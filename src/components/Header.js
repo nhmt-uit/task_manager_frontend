@@ -1,14 +1,20 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'contexts/AuthContext';
+
 const Header = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.reload();
+    logout();
+    navigate('/login');
   };
 
   return (
-    <div>
+    <header>
       <h3>Task Manager</h3>
       <button onClick={handleLogout}>Logout</button>
-    </div>
+    </header>
   );
 };
 

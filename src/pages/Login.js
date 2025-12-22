@@ -1,43 +1,34 @@
-import { useState } from "react";
-import { authService } from "../services/auth.service";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authService } from 'services/auth.service';
+import { useAuth } from 'contexts/AuthContext';
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     try {
       const res = await authService.login({ email, password });
-      localStorage.setItem("token", res.data.token);
-      window.location.href = "/";
-    } catch (err) {
-      setError("Email or password incorrect");
+      login(res.data.token);
+      navigate('/tasks');
+    } catch {
+      setError('Login failed');
     }
   };
 
   return (
-    <div>
+    <form onSubmit={submit}>
       <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button type="submit">Login</button>
-      </form>
-    </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <input value={email} placeholder='Email' onChange={(e) => setEmail(e.target.value)} />
+      <input type="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+      <button>Login</button>
+    </form>
   );
 };
 

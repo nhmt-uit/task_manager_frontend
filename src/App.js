@@ -1,25 +1,31 @@
-import "./App.css";
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import TaskPage from "./pages/TaskPage";
+// import UserPage from './pages/UserPage';
+import ProtectedRoute from "./routes/ProtectedRoute";
+import MainLayout from "./layouts/MainLayout";
 
 function App() {
-  const token = localStorage.getItem("token");
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route path="/login" element={<Login />} />
 
-  return token ? <TaskPage /> : <Login />;
+        {/* Private */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/tasks" element={<TaskPage />} />
+            {/* <Route path="/users" element={<UserPage />} /> */}
+            {/* More routes */}
+          </Route>
+        </Route>
+
+        {/* Default */}
+        <Route path="*" element={<Navigate to="/tasks" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <div className="App">
-//         <h1>Task Manager</h1>
-//         <TaskList />
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { taskService } from '../services/task.service';
+import { taskService } from 'services/task.service';
 
 const TaskForm = ({ onSuccess }) => {
   const [title, setTitle] = useState('');

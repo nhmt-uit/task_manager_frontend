@@ -1,14 +1,12 @@
-import { useState } from "react";
-import TaskList from '../components/TaskList';
-import TaskForm from '../components/TaskForm';
-import Header from '../components/Header';
+import { useState } from 'react';
+import TaskForm from '../components/task/TaskForm';
+import TaskList from '../components/task/TaskList';
 
 const TaskPage = () => {
   const [reload, setReload] = useState(false);
 
   return (
     <>
-      <Header />
       <TaskForm onSuccess={() => setReload(!reload)} />
       <TaskList reload={reload} />
     </>

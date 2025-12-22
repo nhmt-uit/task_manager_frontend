@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { taskService } from "../services/task.service";
+import { taskService } from "../../services/task.service";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -22,7 +22,7 @@ const TaskList = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, [page, statusFilter, keyword]);
+  }, [page, statusFilter, keyword]); //reload
 
   const handleStatusChange = async (id, newStatus) => {
     await taskService.updateStatus(id, { status: newStatus });
