@@ -1,86 +1,127 @@
-import React, { useEffect, useState } from "react";
-import { taskService } from "../../services/task.service";
+import {
+  Table,
+  Select,
+  Input,
+  Space,
+  Tag,
+  Button,
+  Popconfirm,
+  message,
+} from "antd";
+import EditTaskModal from "./EditTaskModal";
 
-const TaskList = () => {
+import { useEffect, useState } from "react";
+import { taskService } from "services/task.service";
+
+const TaskList = ({ reload }) => {
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [keyword, setKeyword] = useState("");
+  const [total, setTotal] = useState(0);
+  const [status, setStatus] = useState();
+  const [keyword, setKeyword] = useState();
+
+  const [editingTask, setEditingTask] = useState(null);
 
   const fetchTasks = async () => {
+    setLoading(true);
     const res = await taskService.getTasks({
       page,
       limit: 5,
-      status: statusFilter,
+      status,
       keyword,
     });
-
     setTasks(res.data.data);
-    setTotalPages(res.data.pagination.totalPages);
+    setTotal(res.data.pagination.total);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchTasks();
-  }, [page, statusFilter, keyword]); //reload
+  }, [page, status, keyword, reload]);
 
-  const handleStatusChange = async (id, newStatus) => {
-    await taskService.updateStatus(id, { status: newStatus });
-    fetchTasks();
-  };
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (s) => (
+        <Tag color={s === "done" ? "green" : s === "doing" ? "blue" : "gray"}>
+          {s.toUpperCase()}
+        </Tag>
+      ),
+    },
+    {
+      title: "Actions",
+      render: (_, record) => (
+        <Space>
+          <Button size="small" onClick={() => setEditingTask(record)}>
+            Edit
+          </Button>
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure to delete this task?")) {
-      await taskService.deleteTask(id);
-      fetchTasks();
-    }
-  };
+          <Popconfirm
+            title="Delete this task?"
+            onConfirm={async () => {
+              await taskService.deleteTask(record._id);
+              message.success("Deleted");
+              fetchTasks();
+            }}
+          >
+            <Button danger size="small">
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
   return (
-    <div>
-      <h2>Task List</h2>
+    <>
+      <Space style={{ marginBottom: 16 }}>
+        <Select
+          allowClear
+          placeholder="Filter status"
+          onChange={setStatus}
+          style={{ width: 140 }}
+          options={[
+            { value: "todo", label: "Todo" },
+            { value: "doing", label: "Doing" },
+            { value: "done", label: "Done" },
+          ]}
+        />
 
-      <input
-        placeholder="Search..."
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
+        <Input.Search
+          placeholder="Search title"
+          onSearch={setKeyword}
+          allowClear
+        />
+      </Space>
+
+      <Table
+        rowKey="_id"
+        columns={columns}
+        dataSource={tasks}
+        loading={loading}
+        pagination={{
+          current: page,
+          total,
+          pageSize: 5,
+          onChange: setPage,
+        }}
       />
-
-      <select
-        value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
-      >
-        <option value="">All</option>
-        <option value="todo">Todo</option>
-        <option value="doing">Doing</option>
-        <option value="done">Done</option>
-      </select>
-
-      <ul>
-        {tasks.map((task) => (
-          <li key={task._id}>
-            <strong>{task.title}</strong> - {task.status}
-            <button onClick={() => handleStatusChange(task._id, "done")}>
-              Mark Done
-            </button>
-            <button onClick={() => handleDelete(task._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-
-      <div>
-        <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          Prev
-        </button>
-        <span>
-          {" "}
-          Page {page} of {totalPages}{" "}
-        </span>
-        <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
-          Next
-        </button>
-      </div>
-    </div>
+      {editingTask && (
+        <EditTaskModal
+          open={!!editingTask}
+          task={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSuccess={fetchTasks}
+        />
+      )}
+    </>
   );
 };
 

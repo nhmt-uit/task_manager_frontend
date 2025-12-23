@@ -1,36 +1,44 @@
-import { useState } from 'react';
-import { taskService } from 'services/task.service';
+import { Form, Input, Button, Select } from "antd";
+import { taskService } from "services/task.service";
 
 const TaskForm = ({ onSuccess }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [form] = Form.useForm();
 
-  const submit = async (e) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-
-    await taskService.createTask({ title, description });
-    setTitle('');
-    setDescription('');
+  const submit = async (values) => {
+    await taskService.createTask(values);
+    form.resetFields();
     onSuccess();
   };
 
   return (
-    <form onSubmit={submit}>
-      <input
-        placeholder="Task title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+    <Form
+      form={form}
+      layout="inline"
+      onFinish={submit}
+      style={{ marginBottom: 16 }}
+    >
+      <Form.Item
+        name="title"
+        rules={[{ required: true, message: "Enter task title" }]}
+      >
+        <Input placeholder="Task title" />
+      </Form.Item>
 
-      <input
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <Form.Item name="status" initialValue="todo">
+        <Select
+          options={[
+            { value: "todo", label: "Todo" },
+            { value: "doing", label: "Doing" },
+            { value: "done", label: "Done" },
+          ]}
+          style={{ width: 120 }}
+        />
+      </Form.Item>
 
-      <button>Add Task</button>
-    </form>
+      <Button type="primary" htmlType="submit">
+        Add
+      </Button>
+    </Form>
   );
 };
 
