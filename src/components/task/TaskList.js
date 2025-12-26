@@ -59,17 +59,38 @@ const TaskList = ({ reload }) => {
     return STATUS_FLOW[(index + 1) % STATUS_FLOW.length];
   };
 
+  // const updateStatus = async (task) => {
+  //   const nextStatus = getNextStatus(task.status);
+  //   try {
+  //     setUpdatingId(task._id);
+  //     await taskService.updateStatus(task._id, nextStatus);
+  //     message.success(`Moved to ${nextStatus}`);
+  //     fetchTasks();
+  //   } catch {
+  //     message.error("Update failed");
+  //   } finally {
+  //     setUpdatingId(null);
+  //   }
+  // };
+
+  // Update UI first, call api later
   const updateStatus = async (task) => {
     const nextStatus = getNextStatus(task.status);
+
+    // backup state
+    const oldTasks = [...tasks];
+
+    // optimistic update
+    setTasks((prev) =>
+      prev.map((t) => (t._id === task._id ? { ...t, status: nextStatus } : t))
+    );
+
     try {
-      setUpdatingId(task._id);
       await taskService.updateStatus(task._id, nextStatus);
       message.success(`Moved to ${nextStatus}`);
-      fetchTasks();
     } catch {
-      message.error("Update failed");
-    } finally {
-      setUpdatingId(null);
+      setTasks(oldTasks);
+      message.error("Update failed, rollback");
     }
   };
 

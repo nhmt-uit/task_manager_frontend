@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+📌 Task Management App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack task management application built to practice real-world CRUD flows, authentication, and user experience optimizations.
 
-## Available Scripts
+⸻
 
-In the project directory, you can run:
+🚀 Features
+	•	User authentication (JWT-based)
+	•	Create / update / delete tasks
+	•	Inline task status update (Todo → Doing → Done)
+	•	Optimistic UI update with rollback on failure
+	•	Pagination, search, and filter by status
+	•	Proper loading, empty, and error states
+	•	Protected routes with auto logout on 401
 
-### `npm start`
+⸻
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+🛠 Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Backend
+	•	Node.js
+	•	Express
+	•	MongoDB (Mongoose)
+	•	JWT Authentication
 
-### `npm test`
+Frontend
+	•	React
+	•	React Router
+	•	Ant Design
+	•	Axios (with interceptor)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+⸻
 
-### `npm run build`
+Demo Flow
+	1.	User logs in
+	2.	View task list
+	3.	Click status tag to update task status
+	4.	UI updates instantly (optimistic update)
+	5.	Error handling with rollback if API fails
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+⸻
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+⚙️ Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Backend
+    1. git clone https://github.com/nhmt-uit/task-manager-backend.git
+    2. cd task-manager-backend
+    3. npm install
+    4. npm run dev
 
-### `npm run eject`
+Create .env file:
+    PORT=3001
+    MONGO_URI=mongodb://127.0.0.1:27017/task_manager
+    JWT_SECRET=your_secret_key
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Frontend
+    1. npm install
+    2. npm start
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+⸻
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+💡 Design Decisions
+•	PATCH is used for partial updates such as task status
+•	Optimistic update is applied to improve UX and reduce unnecessary refetching
+•	State is rolled back if API request fails
+•	Layout and routing are structured for scalability
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+⸻
 
-## Learn More
+📌 Future Improvements
+	•	User roles (Admin / Member)
+	•	Task assignment
+	•	Admin dashboard
+	•	UI enhancements
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+⸻
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+👤 Author
+	•	GitHub: https://github.com/nhmt-uit
