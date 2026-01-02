@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
+import Register from "pages/Register";
 import TaskPage from "./pages/TaskPage";
 // import UserPage from './pages/UserPage';
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         {/* Public */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* Private */}
         <Route element={<ProtectedRoute />}>

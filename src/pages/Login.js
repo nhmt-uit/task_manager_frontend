@@ -1,41 +1,55 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Card, Form, Input, Button, Typography } from "antd";
 
-import { authService } from 'services/auth.service';
-import { useAuth } from 'contexts/AuthContext';
+import { authService } from "services/auth.service";
+import { useAuth } from "contexts/AuthContext";
 
 const { Title, Text } = Typography;
 
 const Login = () => {
-  const [email, setEmail] = useState('test@example.com');
-  const [password, setPassword] = useState('123456');
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const [form] = Form.useForm();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const onFinish = async () => {
+  useEffect(() => {
+    if (location.state?.email) {
+      form.setFieldsValue({
+        email: location.state.email,
+      });
+    }
+  }, [location.state, form]);
+
+  const onFinish = async (values) => {
     // e.preventDefault();
     try {
-      const res = await authService.login({ email, password });
+      const res = await authService.login(values);
       login(res.data.token);
-      navigate('/tasks');
+      navigate("/tasks");
+      setLoading(true);
     } catch {
-      setError('Login failed');
+      setError("Login failed");
+      setLoading(false);
     }
   };
 
- return (
+  return (
     <div style={styles.wrapper}>
       <Card style={styles.card}>
         <Title level={3} style={{ textAlign: "center" }}>
           Task Manager
         </Title>
-        <Text type="secondary" style={{ display: "block", textAlign: "center", marginBottom: 24 }}>
+        <Text
+          type="secondary"
+          style={{ display: "block", textAlign: "center", marginBottom: 24 }}
+        >
           Login to continue
         </Text>
 
-        <Form layout="vertical" onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Email"
             name="email"
@@ -49,15 +63,22 @@ const Login = () => {
             name="password"
             rules={[{ required: true, message: "Please input your password" }]}
           >
-            <Input.Password placeholder="••••••••" />
+            <Input.Password
+              autoFocus={!!location.state?.email}
+              placeholder="••••••••"
+            />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Login
             </Button>
           </Form.Item>
         </Form>
+        <div style={{ textAlign: "center", marginTop: 16 }}>
+          <span>{`Don't have an account?`} </span>
+          <Link to="/register">Register</Link>
+        </div>
       </Card>
     </div>
   );
