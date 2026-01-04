@@ -2,6 +2,10 @@
 
 A full-stack task management application built to practice real-world CRUD flows, authentication, and user experience optimizations.
 
+## Live Demo
+- Frontend: https://taskmanagerfrontend-zeta.vercel.app/login
+- Backend API: https://task-manager-backend-0rjk.onrender.com
+
 ⸻
 
 🚀 Features
