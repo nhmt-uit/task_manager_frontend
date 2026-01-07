@@ -27,7 +27,7 @@ const Login = () => {
     // e.preventDefault();
     try {
       const res = await authService.login(values);
-      login(res.data.token);
+      login(res.data);
       navigate("/tasks");
       setLoading(true);
     } catch {
