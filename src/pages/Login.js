@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { Card, Form, Input, Button, Typography } from "antd";
+import { Card, Form, Input, Button, Typography, message } from "antd";
 
 import { authService } from "services/auth.service";
 import { useAuth } from "contexts/AuthContext";
@@ -8,7 +8,7 @@ import { useAuth } from "contexts/AuthContext";
 const { Title, Text } = Typography;
 
 const Login = () => {
-  const [error, setError] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const [form] = Form.useForm();
@@ -30,14 +30,19 @@ const Login = () => {
       login(res.data);
       navigate("/tasks");
       setLoading(true);
-    } catch {
-      setError("Login failed");
+    } catch (error) {
+      const message = error.response?.data?.message || "Something went wrong";
+      messageApi.open({
+        type: "error",
+        content: message,
+      });
       setLoading(false);
     }
   };
 
   return (
     <div style={styles.wrapper}>
+      {contextHolder}
       <Card style={styles.card}>
         <Title level={3} style={{ textAlign: "center" }}>
           Task Manager

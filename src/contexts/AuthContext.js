@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { authService } from "services/auth.service";
 
 const AuthContext = createContext(null);
 
@@ -18,10 +19,14 @@ export const AuthProvider = ({ children }) => {
     setToken(data.accessToken);
   };
 
-  const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+  const logout = async () => {
+    // localStorage.removeItem("accessToken");
+    // localStorage.removeItem("refreshToken");
+    await authService.logout({
+      refreshToken: localStorage.getItem("refreshToken"),
+    });
     setToken(null);
+    localStorage.clear();
     window.location.href = "/login";
   };
 
