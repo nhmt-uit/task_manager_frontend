@@ -8,6 +8,7 @@ const { Title, Text } = Typography;
 
 const Register = () => {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -49,7 +50,7 @@ const Register = () => {
           />
         )}
 
-        <Form layout="vertical" onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Name"
             name="name"
@@ -85,7 +86,7 @@ const Register = () => {
             name="confirmPassword"
             dependencies={["password"]}
             rules={[
-              { required: true, message: "Please confirm your password" },
+              { required: true, message: "Confirm password is required" },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
@@ -99,10 +100,26 @@ const Register = () => {
             <Input.Password placeholder="••••••••" />
           </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Register
-            </Button>
+          <Form.Item shouldUpdate>
+            {() => {
+                          const hasErrors = form
+                            .getFieldsError()
+                            .some(({ errors }) => errors.length > 0);
+            
+                          const touched = form.isFieldsTouched(true);
+            
+                          return (
+                            <Button
+                              type="primary"
+                              htmlType="submit"
+                              disabled={!touched || hasErrors}
+                              loading={loading}
+                              block
+                            >
+                              Register
+                            </Button>
+                          );
+                        }}
           </Form.Item>
         </Form>
         <div style={{ textAlign: "center", marginTop: 16 }}>

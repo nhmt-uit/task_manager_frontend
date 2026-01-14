@@ -58,7 +58,10 @@ const Login = () => {
           <Form.Item
             label="Email"
             name="email"
-            rules={[{ required: true, message: "Please input your email" }]}
+            rules={[
+              { required: true, message: "Email is required" },
+              { type: "email", message: "Email is not valid" },
+            ]}
           >
             <Input placeholder="email@example.com" />
           </Form.Item>
@@ -66,7 +69,10 @@ const Login = () => {
           <Form.Item
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Please input your password" }]}
+            rules={[
+              { required: true, message: "Password is required" },
+              { min: 6, message: "Password must be at least 6 characters" },
+            ]}
           >
             <Input.Password
               autoFocus={!!location.state?.email}
@@ -74,10 +80,26 @@ const Login = () => {
             />
           </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Login
-            </Button>
+          <Form.Item shouldUpdate>
+            {() => {
+              const hasErrors = form
+                .getFieldsError()
+                .some(({ errors }) => errors.length > 0);
+
+              const touched = form.isFieldsTouched(true);
+
+              return (
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={!touched || hasErrors}
+                  loading={loading}
+                  block
+                >
+                  Login
+                </Button>
+              );
+            }}
           </Form.Item>
         </Form>
         <div style={{ textAlign: "center", marginTop: 16 }}>
