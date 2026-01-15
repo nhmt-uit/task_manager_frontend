@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "pages/Register";
 import TaskPage from "./pages/TaskPage";
-// import UserPage from './pages/UserPage';
+import UserPage from './pages/UserPage';
 import ProtectedRoute from "./routes/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
 
@@ -18,7 +18,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/tasks" element={<TaskPage />} />
-            {/* <Route path="/users" element={<UserPage />} /> */}
+            <Route path="/users" element={<UserPage />} />
             {/* More routes */}
           </Route>
         </Route>
