@@ -1,13 +1,19 @@
 import { Layout, Menu } from "antd";
-import { UnorderedListOutlined, TeamOutlined,  LogoutOutlined } from "@ant-design/icons";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+
 import { useAuth } from "contexts/AuthContext";
+import { MENU_ITEMS } from "config/menu";
 
 const { Header, Sider, Content } = Layout;
 
 const MainLayout = () => {
+  const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  const filteredMenu = MENU_ITEMS.filter((item) =>
+    item.roles.includes(user.role)
+  );
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -20,27 +26,12 @@ const MainLayout = () => {
         <Menu
           theme="dark"
           mode="inline"
+          selectedKeys={[location.pathname]}
           onClick={({ key }) => {
             if (key === "logout") logout();
             else navigate(key);
           }}
-          items={[
-            {
-              key: "/tasks",
-              icon: <UnorderedListOutlined />,
-              label: "Tasks",
-            },
-            {
-              key: "/users",
-              icon: <TeamOutlined />,
-              label: "Users",
-            },
-            {
-              key: "logout",
-              icon: <LogoutOutlined />,
-              label: "Logout",
-            },
-          ]}
+          items={filteredMenu}
         />
       </Sider>
 

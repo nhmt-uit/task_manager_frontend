@@ -24,7 +24,6 @@ const Login = () => {
   }, [location.state, form]);
 
   const onFinish = async (values) => {
-    // e.preventDefault();
     try {
       const res = await authService.login(values);
       login(res.data);

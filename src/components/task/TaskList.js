@@ -12,7 +12,7 @@ import {
 } from "antd";
 import EditTaskModal from "./EditTaskModal";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { taskService } from "services/task.service";
 
 const STATUS_FLOW = ["todo", "doing", "done"];
@@ -26,65 +26,49 @@ const TaskList = ({ reload }) => {
   const [keyword, setKeyword] = useState();
 
   const [editingTask, setEditingTask] = useState(null);
-  const [updatingId, setUpdatingId] = useState(null);
   const [error, setError] = useState(null);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-
+  
       const res = await taskService.getTasks({
         page,
         limit: 5,
         status,
         keyword,
       });
-
+  
       setTasks(res.data.data);
       setTotal(res.data.pagination.total);
-    } catch (err) {
+    } catch {
       setError("Failed to load tasks");
     } finally {
       setLoading(false);
     }
-  };
-
+  }, [page, status, keyword]);
+  
   useEffect(() => {
     fetchTasks();
-  }, [page, status, keyword, reload]);
+  }, [fetchTasks, reload]);
 
   const getNextStatus = (current) => {
     const index = STATUS_FLOW.indexOf(current);
     return STATUS_FLOW[(index + 1) % STATUS_FLOW.length];
   };
 
-  // const updateStatus = async (task) => {
-  //   const nextStatus = getNextStatus(task.status);
-  //   try {
-  //     setUpdatingId(task._id);
-  //     await taskService.updateStatus(task._id, nextStatus);
-  //     message.success(`Moved to ${nextStatus}`);
-  //     fetchTasks();
-  //   } catch {
-  //     message.error("Update failed");
-  //   } finally {
-  //     setUpdatingId(null);
-  //   }
-  // };
-
   // Update UI first, call api later
-  const updateStatus = async (task) => {
+  const updateStatus = useCallback(async (task) => {
     const nextStatus = getNextStatus(task.status);
-
-    // backup state
     const oldTasks = [...tasks];
-
-    // optimistic update
-    setTasks((prev) =>
-      prev.map((t) => (t._id === task._id ? { ...t, status: nextStatus } : t))
+  
+    setTasks(prev =>
+      prev.map(t =>
+        t._id === task._id ? { ...t, status: nextStatus } : t
+      )
     );
-
+  
     try {
       await taskService.updateStatus(task._id, nextStatus);
       message.success(`Moved to ${nextStatus}`);
@@ -92,7 +76,7 @@ const TaskList = ({ reload }) => {
       setTasks(oldTasks);
       message.error("Update failed, rollback");
     }
-  };
+  }, [tasks]);
 
   const columns = [
     {
@@ -111,10 +95,9 @@ const TaskList = ({ reload }) => {
             color={color}
             style={{
               cursor: "pointer",
-              opacity: updatingId === record._id ? 0.5 : 1,
             }}
             onClick={() => {
-              if (!loading && !updatingId) updateStatus(record);
+              if (!loading) updateStatus(record);
             }}
           >
             {status.toUpperCase()}
