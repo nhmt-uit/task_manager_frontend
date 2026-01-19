@@ -24,7 +24,6 @@ const TaskList = ({ reload }) => {
   const [total, setTotal] = useState(0);
   const [status, setStatus] = useState();
   const [keyword, setKeyword] = useState();
-
   const [editingTask, setEditingTask] = useState(null);
   const [error, setError] = useState(null);
 
