@@ -17,6 +17,10 @@ export const taskService = {
     return api.patch(`/tasks/${id}/status`, { status });
   },
 
+  assignTask(id, assignedTo) {
+    return api.patch(`/tasks/${id}/assign`, { assignedTo });
+  },
+
   deleteTask(id) {
     return api.delete(`/tasks/${id}`);
   },
