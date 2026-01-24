@@ -1,7 +1,27 @@
 // pages/users/UserTable.jsx
-import { Table, Tag } from "antd";
+import { Table, Tag, Button, Space, Popconfirm, message } from "antd";
+import { useAuth } from "contexts/AuthContext";
+import { userService } from "services/user.service";
 
-export default function UserTable({ data, loading }) {
+export default function UserTable({ data, loading, onUserUpdate, onEditUser }) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
+
+  const handleDelete = async (userId) => {
+    try {
+      await userService.deleteUser(userId);
+      message.success("User deleted successfully");
+      onUserUpdate(); // Refresh the user list
+    } catch (error) {
+      message.error("Failed to delete user");
+      console.error("Delete error:", error);
+    }
+  };
+
+  const handleEdit = (userData) => {
+    onEditUser(userData);
+  };
+
   const columns = [
     {
       title: "Name",
@@ -23,9 +43,41 @@ export default function UserTable({ data, loading }) {
       render: (v) =>
         v ? <Tag color="green">Active</Tag> : <Tag>Inactive</Tag>,
     },
+    ...(isAdmin ? [{
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Space>
+          <Button
+            size="small"
+            onClick={() => handleEdit(record)}
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title="Delete this user?"
+            description="This action cannot be undone."
+            onConfirm={() => handleDelete(record._id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger size="small">
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    }] : []),
   ];
 
   return (
-    <Table rowKey="_id" columns={columns} dataSource={data} loading={loading} />
+    <Table
+      rowKey="_id"
+      columns={columns}
+      dataSource={data}
+      loading={loading}
+      scroll={{ x: "max-content" }}
+      responsive
+    />
   );
 }

@@ -8,21 +8,64 @@ import useUsers from "components/user/useUsers";
 export default function UserPage() {
   const { users, loading, setKeyword, refetch } = useUsers();
   const [open, setOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+
+  const handleOpen = () => {
+    setEditingUser(null);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setEditingUser(null);
+    setOpen(false);
+  };
+
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+    setOpen(true);
+  };
 
   return (
     <>
-      <Space style={{ marginBottom: 16 }}>
-        <UserSearch onSearch={setKeyword} />
-        <Button type="primary" onClick={() => setOpen(true)}>
-          Add User
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 12,
+          marginBottom: 16,
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ flexGrow: 1, minWidth: 240, maxWidth: 350 }}>
+          <UserSearch onSearch={setKeyword} />
+        </div>
+        <Button
+          type="primary"
+          onClick={handleOpen}
+          style={{
+            minWidth: 120,
+            fontWeight: 500,
+            fontSize: 16,
+            borderRadius: 8,
+            boxShadow: "0 2px 8px rgba(24,144,255,0.08)"
+          }}
+        >
+          + Add User
         </Button>
-      </Space>
+      </div>
 
-      <UserTable data={users} loading={loading} />
+      <UserTable 
+        data={users} 
+        loading={loading} 
+        onUserUpdate={refetch}
+        onEditUser={handleEditUser}
+      />
 
       <UserModal
         open={open}
-        onClose={() => setOpen(false)}
+        user={editingUser}
+        onClose={handleClose}
         onSuccess={refetch}
       />
     </>
